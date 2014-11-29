@@ -88,13 +88,13 @@ static const uint32_t offset_basis = 2166136261U;
 
 int utf8_to_unicode(unsigned c1, unsigned c2, unsigned c3)
 {
-	unsigned short unicode;
-	
-	unicode = (c1 & 0x1F) << 12;
-	unicode |= (c2 & 0x3F) << 6;
-	unicode |= (c3 & 0x3F);
-	
-	return unicode;
+    unsigned short unicode;
+
+    unicode = (c1 & 0x1F) << 12;
+    unicode |= (c2 & 0x3F) << 6;
+    unicode |= (c3 & 0x3F);
+
+    return unicode;
 }
 
 static uint32_t fnv_hash(void *data, uint32_t len)
@@ -366,26 +366,19 @@ static int gr_ttf_render_text(TrueTypeFont *font, GGLSurface *surface, const cha
     const char *text_itr = text;
     int *char_idxs;
 	
-	char_idxs = (int*)malloc(strlen(text) * sizeof(int));
+    char_idxs = (int*)malloc(strlen(text) * sizeof(int));
     while((c = *text_itr++))
     {
-		if (c < 0x80)
-		{
-			char_idx = FT_Get_Char_Index(f->face, c);
-		}
-		else
-		{
-			if ((c & 0xF0) == 0xE0)
-			{
-				c2 = *text_itr++;
-				c3 = *text_itr++;
-				char_idx = FT_Get_Char_Index(f->face, utf8_to_unicode(c, c2, c3));
-			}
-			else
-			{
-				char_idx = FT_Get_Char_Index(f->face, c);
-			}
-		}
+        if (c < 0x80)
+        {
+            char_idx = FT_Get_Char_Index(f->face, c);
+        }
+        else
+        {
+            c2 = *text_itr++;
+            c3 = *text_itr++;
+            char_idx = FT_Get_Char_Index(f->face, utf8_to_unicode(c, c2, c3));
+        }
         char_idxs[max_len] = char_idx;
         ent = gr_ttf_glyph_cache_get(f, char_idx);
         if(ent)
@@ -412,9 +405,9 @@ static int gr_ttf_render_text(TrueTypeFont *font, GGLSurface *surface, const cha
 
     if(font->max_height == -1) 
     {
-		free(char_idxs);
-        return -1;
-	}
+        free(char_idxs);
+    return -1;
+    }
 
     height = font->max_height;
 
@@ -449,7 +442,7 @@ static int gr_ttf_render_text(TrueTypeFont *font, GGLSurface *surface, const cha
         prev_idx = char_idx;
     }
 
-	free(char_idxs);
+    free(char_idxs);
     return max_len;
 }
 
@@ -576,23 +569,16 @@ int gr_ttf_maxExW(const char *s, void *font, int max_width)
 
     for(; (c = *s++); ++max_len)
     {
-		if (c < 0x80)
-		{
-			char_idx = FT_Get_Char_Index(f->face, c);
-		}
-		else
-		{
-			if ((c & 0xF0) == 0xE0)
-			{
-				c2 = *s++;
-				c3 = *s++;
-				char_idx = FT_Get_Char_Index(f->face, utf8_to_unicode(c, c2, c3));
-			}
-			else
-			{
-				char_idx = FT_Get_Char_Index(f->face, c);
-			}
-		}
+        if (c < 0x80)
+        {
+            char_idx = FT_Get_Char_Index(f->face, c);
+        }
+        else
+        {
+            c2 = *s++;
+            c3 = *s++;
+            char_idx = FT_Get_Char_Index(f->face, utf8_to_unicode(c, c2, c3));
+        }
         if(FT_HAS_KERNING(f->face) && prev_idx && char_idx)
         {
             FT_Get_Kerning(f->face, prev_idx, char_idx, FT_KERNING_DEFAULT, &delta);
